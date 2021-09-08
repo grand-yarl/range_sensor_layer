@@ -17,6 +17,8 @@ public:
 	Matrix operator+(const Matrix& right) const;
 	Matrix operator-(const Matrix& right) const;
 	Matrix operator*(const Matrix& right) const;
+	Matrix& Gauss();
+	T det();
 	friend ostream& operator<<(ostream &os, const Matrix<T> &c)
 	{
 		if ((c.row == 0) && (c.col == 0)) 
@@ -31,7 +33,7 @@ public:
 			{
 				for (int j = 0; j < c.col; j++) 
 				{
-					os << c.get_el(i, j) << '\t';
+					os << round(c.get_el(i, j) * 1000) / 1000 << '\t';
 				}
 				os << '\n';
 			}
@@ -204,6 +206,47 @@ Matrix<T> Matrix<T>::operator*(const Matrix<T>& right) const
 		return c;
 	}
 }
+
+template <typename T>
+Matrix<T>& Matrix<T>::Gauss()
+{
+	for (int i = 1; i < this->row; i++)
+	{
+		for (int j = 0; j < i; j++)
+		{
+			T coeff = -this->get_el(i, j) / this->get_el(j, j);
+			for (int n = 0; n < this->col; n++)
+			{
+				T value = coeff * this->get_el(j, n) + this->get_el(i, n);
+				this->set_el(i, n, value);
+			}
+		}
+	}
+	return *this;
+}
+
+template <typename T>
+T Matrix<T>::det()
+{
+	if (this->row != this->col)
+	{
+		cout << "This is not square matrix, determinant can't be calculated" << '\n';
+		return 0;
+	}
+	else
+	{
+		Matrix<T> c = *this;
+		c.Gauss();
+		T determinant = 1;
+		for (int i = 0; i < c.row; i++)
+		{
+			determinant *= c.get_el(i, i);
+		}
+		return determinant;
+	}
+	
+}
+
 
 template <typename T>
 Matrix<T>::~Matrix()
