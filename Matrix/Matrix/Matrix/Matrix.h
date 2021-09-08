@@ -17,8 +17,9 @@ public:
 	Matrix operator+(const Matrix& right) const;
 	Matrix operator-(const Matrix& right) const;
 	Matrix operator*(const Matrix& right) const;
+	Matrix operator^(int q) const;
 	Matrix& Gauss();
-	T det();
+	T det() const;
 	friend ostream& operator<<(ostream &os, const Matrix<T> &c)
 	{
 		if ((c.row == 0) && (c.col == 0)) 
@@ -226,7 +227,7 @@ Matrix<T>& Matrix<T>::Gauss()
 }
 
 template <typename T>
-T Matrix<T>::det()
+T Matrix<T>::det() const
 {
 	if (this->row != this->col)
 	{
@@ -247,6 +248,67 @@ T Matrix<T>::det()
 	
 }
 
+template <typename T>
+Matrix<T> Matrix<T>::operator^(int q) const
+{
+	if (this->det() == 0)
+	{
+		cout << "Matrix has determinant - 0, there is no opposite matrix" << '\n';
+		Matrix<T> d;
+		return d;
+	}
+	else
+	{
+		Matrix<T> c(this->row, this->col * 2);
+		for (int i = 0; i < c.row; i++)
+		{
+			for (int j = 0; j < c.col; j++)
+			{
+				if (j < this->col)
+				{
+					c.set_el(i, j, this->get_el(i, j));
+				}
+				else
+				{
+					if (j == i + this->col)
+					{
+						c.set_el(i, j, 1);
+					}
+				}
+			}
+		}
+		cout << c;
+		for (int j = 0; j < this->col; j++)
+		{
+			T div = c.get_el(j, j);
+			for (int k = 0; k < c.col; k++)
+			{
+				c.set_el(j, k, c.get_el(j, k) / div);
+			}
+			for (int i = 0; i < this->row; i++)
+			{
+				if (i != j)
+				{
+					T coeff = -c.get_el(i, j);
+					for (int n = 0; n < c.col; n++)
+					{
+						T value = coeff * c.get_el(j, n) + c.get_el(i, n);
+						c.set_el(i, n, value);
+					}
+				}
+			}
+		}
+		Matrix<T> d(this->row, this->col);
+		for (int i = 0; i < this->row; i++)
+		{
+			for (int j = 0; j < this->col; j++)
+			{
+				d.set_el(i, j, c.get_el(i, j + this->col));
+			}
+		}
+		return d;
+	}
+}
 
 template <typename T>
 Matrix<T>::~Matrix()
