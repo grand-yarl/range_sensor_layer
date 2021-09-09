@@ -52,7 +52,7 @@ Matrix<T>::Matrix()
 	row = 0;
 	col = 0;
 	M = nullptr;
-	cout << "construct" << '\n';
+	cout << "construct Matrix" << '\n';
 };
 
 template <typename T>
@@ -69,12 +69,13 @@ Matrix<T>::Matrix(int r, int c)
 			M[i][j] = 0;
 		}
 	}
-	cout << "construct with rows " << r << " and with columns " << c << '\n';
+	cout << "construct Matrix with rows " << r << " and with columns " << c << '\n';
 };
 
 template <typename T>
 Matrix<T>::Matrix<T>(const Matrix<T>& cpy)
 {
+	cout << "construct Matrix with rows " << cpy.row << " and with columns " << cpy.col << '\n';
 	this->row = cpy.row;
 	this->col = cpy.col;
 	this->M = (T**) new T*[this->row];
@@ -277,7 +278,6 @@ Matrix<T> Matrix<T>::operator^(int q) const
 				}
 			}
 		}
-		cout << c;
 		for (int j = 0; j < this->col; j++)
 		{
 			T div = c.get_el(j, j);
@@ -316,5 +316,5 @@ Matrix<T>::~Matrix()
 	for (int i = 0; i < row; i++)
 		delete[] M[i];
 	delete[] M;
-	cout << "destruct" << '\n';
+	cout << "destruct Matrix" << '\n';
 };
