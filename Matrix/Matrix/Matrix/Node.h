@@ -5,10 +5,12 @@ class Node
 {
 	public:
 		T data;
-		Node* prev = 0;
-		Node* next = 0;
+		Node* prev = nullptr;
+		Node* next = nullptr;
 		Node(T d = NULL);
 		Node(const Node& cpy);
+		Node& new_data(T d);
+		T get_data();
 		Node& operator=(const Node& cpy);
 		~Node();
 };
@@ -32,6 +34,19 @@ Node<T>::Node<T>(const Node<T>& cpy)
 	this->data = cpy.data;
 	this->prev = cpy.prev;
 	this->next = cpy.next;
+}
+
+template <typename T>
+Node<T>& Node<T>::new_data(T d)
+{
+	this->data = d;
+	return *this;
+}
+
+template <typename T>
+T Node<T>::get_data()
+{
+	return this->data;
 }
 
 template <typename T>
@@ -63,11 +78,31 @@ class que
 	public:
 		que();
 		que(Node<T>& first);
+		que(const que<T>& cpy);
+		que& operator=(const que& cpy);
 		void push(Node<T>& nw);
 		Node<T>* get();
 		Node<T>* del();
 		int lenght() const;
 		Node<T>* search(T value);
+		friend ostream& operator<<(ostream &os, const que<T> &c)
+		{
+			if (c.len == 0)
+			{
+				os << "que is empty" << '\n';
+				return os;
+			}
+			else
+			{
+				Node<T>* current = c.beg;
+				while (current)
+				{
+					os << "->" << current->get_data();
+					current = current->next;
+				}
+				return os;
+			}
+		}
 		~que();
 
 };
@@ -87,6 +122,42 @@ que<T>::que(Node<T>& first)
 	this->end = &first;
 	this->len = 1;
 	cout << "construct new que" << '\n';
+}
+
+template <typename T>
+que<T>::que(const que<T>& cpy)
+{
+	Node<T>* current = cpy.beg;
+	this->len = 0;
+	Node<T>* input = new Node<T>[cpy.lenght()];
+	for (int i = 0; i < cpy.lenght(); i++)
+	{
+		input[i].new_data(current->get_data());
+		this->push(input[i]);
+		cout << input[i].data << '\n';
+		current = current->next;
+	}
+	cout << "construct new que" << '\n';
+}
+
+template <typename T>
+que<T>& que<T>::operator=(const que<T>& cpy)
+{
+	while (this->len != 0)
+	{
+		this->del();
+	}
+	Node<T>* current = cpy.beg;
+	this->len = 0;
+	Node<T>* input = new Node<T>[cpy.lenght()];
+	for (int i = 0; i < cpy.lenght(); i++)
+	{
+		input[i].new_data(current->get_data());
+		this->push(input[i]);
+		cout << input[i].data << '\n';
+		current = current->next;
+	}
+	return *this;
 }
 
 template <typename T>
@@ -110,7 +181,7 @@ void que<T>::push(Node<T>& nw)
 template <typename T>
 Node<T>* que<T>::get()
 {
-	if (this->len == 0)
+	if (this->beg == nullptr)
 	{
 		cout << "there is no element in que" << '\n';
 		return 0;
@@ -136,7 +207,7 @@ Node<T>* que<T>::get()
 template <typename T>
 Node<T>* que<T>::del()
 {
-	if (this->len == 0)
+	if (this->beg == nullptr)
 	{
 		cout << "there is no element in que" << '\n';
 		return 0;
@@ -147,8 +218,8 @@ Node<T>* que<T>::del()
 		this->beg = 0;
 		this->end = 0;
 		this->len -= 1;
-		cout << "element is deleted" << '\n';
-		return this->beg;
+		cout << "element deleted" << '\n';
+		return temp;
 	}
 	Node<T>* temp = this->beg;
 	this->beg = this->beg->next;
@@ -195,7 +266,9 @@ que<T>::~que()
 	while (this->len != 0)
 	{
 		this->del();
+		cout << this->len << '\n';
 	}
 	delete this->beg;
 	delete this->end;
+	cout << "destruct que" << '\n';
 }

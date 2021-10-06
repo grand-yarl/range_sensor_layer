@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="graph.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="stdafx.h" />

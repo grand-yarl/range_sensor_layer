@@ -4,7 +4,7 @@ template <typename T>
 class Matrix
 {
 private:
-	T * * M;
+	T ** M;
 	int row;
 	int col;
 public:
@@ -12,13 +12,21 @@ public:
 	Matrix(int r, int c);
 	Matrix(const Matrix& cpy);
 	T get_el(int i, int j) const;
+	int get_row() const;
+	int get_col() const;
 	void set_el(int i, int j, T value);
 	Matrix& operator=(const Matrix& cpy);
 	Matrix operator+(const Matrix& right) const;
 	Matrix operator-(const Matrix& right) const;
 	Matrix operator*(const Matrix& right) const;
+	Matrix operator*(const T right) const;
+	friend Matrix<T> operator*(const T left, const Matrix& right)
+	{
+		return right*left;
+	}
 	Matrix operator^(int q) const;
 	Matrix& Gauss();
+	Matrix& Tran();
 	T det() const;
 	friend ostream& operator<<(ostream &os, const Matrix<T> &c)
 	{
@@ -42,7 +50,31 @@ public:
 			return os;
 		}
 	}
-
+	friend istream& operator>>(istream &is, Matrix<T> &c)
+	{
+		cout << "Enter Matrix size " << '\n';
+		cout << "rows " << '\t';
+		int row;
+		is >> row;
+		cout << "columns " << '\t';
+		int col;
+		is >> col;
+		cout << "Enter elements " << '\n';
+		Matrix<T> d(row, col);
+		c = d;
+		for (int i = 0; i < row; i++)
+		{
+			for (int j = 0; j < col; j++)
+			{
+				cout << "M[" << i << "][" << j << "] = ";
+				T value;
+				is >> value;
+				c.set_el(i, j, value);
+			}
+			cout << '\n';
+		}
+		return is;
+	}
 	~Matrix();
 };
 
@@ -98,6 +130,18 @@ T Matrix<T>::get_el(int i, int j) const
 	cout << "Invalid indexes" << '\n';
 	system("pause");
 	exit(1);
+}
+
+template <typename T>
+int Matrix<T>::get_row() const
+{
+	return this->row;
+}
+
+template <typename T>
+int Matrix<T>::get_col() const
+{
+	return this->col;
 }
 
 template <typename T>
@@ -210,6 +254,20 @@ Matrix<T> Matrix<T>::operator*(const Matrix<T>& right) const
 }
 
 template <typename T>
+Matrix<T> Matrix<T>::operator*(const T right) const
+{
+	Matrix<T> c = *this;
+	for (int i = 0; i < c.row; i++)
+	{
+		for (int j = 0; j < c.col; j++)
+		{
+			c.set_el(i, j, c.get_el(i, j) * right);
+		}
+	}	
+	return c;
+}
+
+template <typename T>
 Matrix<T>& Matrix<T>::Gauss()
 {
 	for (int i = 1; i < this->row; i++)
@@ -224,6 +282,21 @@ Matrix<T>& Matrix<T>::Gauss()
 			}
 		}
 	}
+	return *this;
+}
+
+template <typename T>
+Matrix<T>& Matrix<T>::Tran()
+{
+	Matrix<T> c(this->col, this->row);
+	for (int i = 0; i < this->row; i++)
+	{
+		for (int j = 0; j < this->col; j++)
+		{
+			c.set_el(j, i, this->get_el(i, j));
+		}
+	}
+	*this = c;
 	return *this;
 }
 
