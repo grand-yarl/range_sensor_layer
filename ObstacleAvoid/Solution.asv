@@ -65,7 +65,7 @@
 %
 % Assume all the states are measurable. At the nominal operating point, the
 % ego car drives east at a constant speed of |20| meters per second.
-V = 70;
+V = 40;
 x0 = [0; 0; 0; 0; V; 0]; 
 u0 = [0; 0; 0];
 
@@ -138,13 +138,13 @@ mpcobj = mpc(dsys);
 
 %% 
 % The prediction horizon is |25| steps, which is equivalent to 0.5 seconds.
-mpcobj.PredictionHorizon = 80;%25;
-mpcobj.ControlHorizon = 10;%5;
+mpcobj.PredictionHorizon = 50;%25;
+mpcobj.ControlHorizon = 2;%5;
 
 %%
 % To prevent the ego car from accelerating or decelerating too quickly, add
 % a hard constraint of 0.2 (m/s^2) on the throttle rate of change.
-mpcobj.ManipulatedVariables(1).RateMin = -10000; 
+mpcobj.ManipulatedVariables(1).RateMin = -6000; 
 mpcobj.ManipulatedVariables(1).RateMax = 6000;
 
 %%
@@ -166,7 +166,7 @@ mpcobj.ManipulatedVariables(2).ScaleFactor = 1;
 % tracking. In this example, choose the Y position and velocity by setting
 % the weights of the other two outputs (X and theta) to zero. Doing so lets
 % the values of these other outputs float.
-mpcobj.Weights.OutputVariables = [0 30 0 0 10 10];
+mpcobj.Weights.OutputVariables = [0 30 0 0 1 1];
 
 %% 
 % Update the controller with the nominal operating condition. For a
@@ -246,7 +246,7 @@ setconstraint(mpcobj,[E1;E2;E3],[F1;F2;F3],[G1;G2;G3],[1;1;0.1]);
 
 %%
 % Use a constant reference signal.
-refSignal = [0 0 0 0 0 0];
+refSignal = [0 0 0 0 V 0];
 
 %%
 % Initialize plant and controller states.
@@ -256,7 +256,7 @@ egoStates = mpcstate(mpcobj);
 
 %%
 % The simulation time is |4| seconds.
-T = 0:Ts:8;
+T = 0:Ts:4;
 
 %%
 % Log simulation data for plotting.

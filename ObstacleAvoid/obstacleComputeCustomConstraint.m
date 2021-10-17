@@ -71,11 +71,11 @@ end
 
 %% Define constraint matrices.
 if (flag == 0)
-    E = [0 0;0 0;0 0];
-    F = [0 1 0 0;0 -1 0 0;constraintSlope -1 0 0]; 
+    E = [0 0 0 ;0 0 0 ;0 0 0 ];
+    F = [0 1 0 0 0 0;0 -1 0 0 0 0;constraintSlope -1 0 0 0 0]; 
     G = [laneWidth*lanes/2;laneWidth*lanes/2;-1*constraintIntercept];
 else
-    E = [0 0;0 0;0 0];
-    F = [0 1 0 0;0 -1 0 0;-constraintSlope 1 0 0]; 
+    E = [0 0 0 ;0 0 0 ;0 0 0 ];
+    F = [0 1 0 0 0 0;0 -1 0 0 0 0;-constraintSlope 1 0 0 0 0]; 
     G = [laneWidth*lanes/2;laneWidth*lanes/2;1*constraintIntercept];
 end

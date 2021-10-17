@@ -15,18 +15,25 @@ function [xdot,y] = obstacleVehicleModelCT(x,u)
 
 %#codegen
 carLength = 5;
+m = 1500;
+Iz = 2250;
+lf = 2.5;
+lr = 2.5;
 theta = x(3);
-V = x(4);
-delta = u(2);
-A = [ 0, 0, -V*sin(theta), cos(theta);
-      0, 0,  V*cos(theta), sin(theta);
-      0, 0, 0,             tan(delta)/carLength;
-      0, 0, 0,             0];
-B = [0  , 0;
-     0  , 0;
-     0  , (V*(tan(delta)^2 + 1))/carLength;
-     0.5, 0];
-C = eye(4);
-D = zeros(4,2);
+dtheta = x(4);
+A = [ 0, 0, 0, 0, cos(theta), -sin(theta);
+      0, 0, 0, 0, sin(theta),  cos(theta);
+      0, 0, 0, 1,          0,           0;
+      0, 0, 0, 0,          0,           0;
+      0, 0, 0, 0,          0,           0;
+      0, 0, 0, 0,    -dtheta,           0];
+B = [  0,     0,      0;          
+       0,     0,      0;          
+       0,     0,      0;          
+       0, lf/Iz, -lr/Iz;          
+     1/m,     0,      0;          
+       0,   1/m,    1/m];
+C = eye(6);
+D = zeros(6,4);
 xdot = A*x + B*u;
 y = C*x + D*u;
