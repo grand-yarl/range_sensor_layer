@@ -22,7 +22,7 @@ clear_on_max_reading - Clear space in front of obtacle, default = True
 
 footprint_clearing_enabled - Clear footprint from obstacles, default = False)
 
-trust_time' - Time of storing obstacle, default = 5.00
+trust_time - Time of storing obstacle, default = 5.00
 
 
 
